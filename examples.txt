@@ -1,0 +1,229 @@
+
+Multi-line expressions
+------------------------
+
+
+a= "Hola Graña,
+   esto es una expresion multilinea";;
+
+
+
+
+Strings
+-------
+
+
+"Esto es una string"
+a= "hola, qué tal todo"
+"hola" ^ " que tal"
+
+
+Unit
+------
+();;
+
+unit;;
+
+
+
+
+Records
+---------
+
+b=5;;
+z= {a=1, x=b, y= true};;
+
+z.x;;
+
+registro = { g=1, t={5,pred 2}};;
+
+registro.t.1;;
+
+
+
+
+
+Tuples
+-------
+
+tupla = {true, "me llamo Raquel", 3};;
+
+tupla.2;;
+
+tupla2 = {true, succ 0, {1,true}};;
+
+tupla2.3.2;;
+
+tupla3 = {{b=1,z=true},false,pred 6};;
+
+
+tupla3.1.z;;
+
+
+
+
+
+Lists
+-------
+
+nil[Nat];;
+
+lst = cons[Nat] 1 (cons[Nat] 2 (cons[Nat] 3 (cons[Nat] 4 (nil[Nat]))));;
+
+head[Nat] lst;;
+
+lst2 = cons[Nat] 5 (cons[Nat] 6 (cons[Nat] 7 (cons[Nat] 8 (nil[Nat]))));;
+
+tail[Nat] lst2;;
+
+
+letrec len : (List[Nat]) -> Nat = lambda l : List[Nat]. if (isnil[Nat] l) then 0 else (succ (len (tail[Nat] l)))
+in len lst;;
+
+f = lambda x:Nat . succ x;;
+
+letrec map : List[Nat] -> (Nat -> Nat) -> List[Nat] =
+lambda lst: List[Nat]. lambda f: (Nat -> Nat). 
+        if (isnil[Nat] (tail[Nat] lst)) then
+                cons[Nat] (f (head[Nat] lst)) (nil[Nat])
+        else
+                cons[Nat] (f (head[Nat] lst)) (map (tail[Nat] lst) f)
+in map lst f;;
+
+
+
+letrec append: List[Nat] -> List[Nat] -> List[Nat] =
+lambda l1: List[Nat]. lambda l2: List[Nat].
+        if isnil[Nat] l1 then 
+                l2
+        else 
+                cons[Nat] (head[Nat] l1) (append (tail[Nat] l1) l2) 
+in append lst lst2;;
+
+
+
+
+
+Fixed point combiner
+---------------------
+
+#----------- PRODUCTO -----------------------------
+letrec sum : Nat -> Nat -> Nat =                                      
+lambda n : Nat. lambda m : Nat. 
+        if iszero n then 
+                m 
+        else 
+                succ (sum (pred n) m) in
+        
+        letrec prod : Nat -> Nat -> Nat =
+        lambda n : Nat. lambda m : Nat. 
+                if iszero n then 
+                        0 
+                else 
+                        sum (prod (pred n) m) m 
+in prod 2 3;;
+
+#----------- FIBONACCI -----------------------------
+letrec sum : Nat -> Nat -> Nat =                                      
+lambda n : Nat. lambda m : Nat. 
+        if iszero n then 
+                m 
+        else 
+                succ (sum (pred n) m) in
+
+        letrec fib: Nat -> Nat =
+        lambda n : Nat. 
+                if iszero n then 
+                        0 
+                else 
+                        if iszero (pred n) then 
+                                1 
+                        else 
+                                sum(fib (pred (pred n))) (fib (pred n)) 
+in fib 5;;  
+
+#----------- FACTORIAL -----------------------------
+letrec sum : Nat -> Nat -> Nat =                                      
+lambda n : Nat. lambda m : Nat. 
+        if iszero n then 
+                m 
+        else 
+                succ (sum (pred n) m) in
+
+        letrec prod : Nat -> Nat -> Nat =
+        lambda n : Nat. lambda m : Nat. 
+                if iszero n then 
+                        0 
+                else 
+                        sum (prod (pred n) m) m in
+                
+                letrec fac: Nat -> Nat =
+                lambda n : Nat. 
+                        if iszero n then 
+                                1 
+                        else 
+                                prod n (fac (pred n))
+in fac 5;;
+
+
+
+
+
+
+
+
+Global definition context
+---------------------------
+
+a = 5;;
+
+c=true;;
+
+record = {b=a, y=c};;
+
+
+
+
+Subtyping
+-----------
+
+a = {x=1, y=1, z={x=1}};;
+b = {x=1, y=1, z=a};;
+
+let idz = lambda r:{}. r in idz {x=0, y=1};;
+
+(lambda r:{x:Nat}. r.x) {x=0, y=1};;
+
+a = {x=1, y=1, z={x=1}};;
+b = {x=1, y=1, z=a};;
+
+(lambda r:{z:{x:Nat}}. (r.z).x) b;;
+(lambda r:{z:{x:Nat}}. (r.z).x) a;;
+ 
+
+
+a1 = lambda r:({}->Nat). r;;
+
+a2 = lambda r:{x:Nat}. r.x;;
+
+a1 a2;;
+
+
+
+Other examples
+---------------
+true
+let x = true in x
+if false then true else false
+0
+succ (succ (succ 0))
+3
+succ (pred 0)
+iszero (pred (succ (succ 0)))
+if iszero 3 then 0 else 1
+iszero true
+if 1 then true else false
+if iszero 3 then 0 else false
+let id = Lx.x in id 3
+let id_bool = L x:Bool. x in id_bool true
+let id_nat = L x:Nat. x in id_nat 5
