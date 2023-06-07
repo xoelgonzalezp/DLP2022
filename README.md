@@ -1,2 +1,2 @@
 # DLP2022
-Repo para la asignatura de Diseño de Lenguajes de Programación UDC
+Repositorio para la asignatura de Diseño de Lenguajes de Programación UDC
